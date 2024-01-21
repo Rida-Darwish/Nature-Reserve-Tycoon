@@ -1,0 +1,59 @@
+[gd_scene load_steps=7 format=3 uid="uid://bmxmw8bu3b3f3"]
+
+[ext_resource type="Texture2D" uid="uid://d2q8aoeylvvot" path="res://TileMap/DefaultTile.png" id="1_b6i2d"]
+[ext_resource type="Texture2D" uid="uid://4rmhxdck537j" path="res://TileMap/PlacedTile.png" id="2_5q0qa"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_53i7f"]
+texture = ExtResource("1_b6i2d")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_c5avv"]
+texture = ExtResource("2_5q0qa")
+texture_region_size = Vector2i(128, 128)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_b2b3p"]
+tile_size = Vector2i(128, 128)
+sources/0 = SubResource("TileSetAtlasSource_53i7f")
+sources/1 = SubResource("TileSetAtlasSource_c5avv")
+
+[sub_resource type="GDScript" id="GDScript_l7sfk"]
+script/source = "extends TileMap
+
+var GridSize = 4
+var Dic = {}
+
+func _ready():
+	
+	for x in GridSize:
+		for y in GridSize:
+			Dic[str(Vector2(x,y))]={
+				\"Type\": \"Default\",
+				\"Pos\": str(Vector2(x,y))
+			}
+			set_cell(0,Vector2(x,y),0,Vector2i(0,0),0)
+	print(Dic)
+
+
+func _process(delta):
+	var tile = local_to_map(get_global_mouse_position())
+
+	for x in GridSize:
+		for y in GridSize:
+			erase_cell(1,Vector2(x,y))
+
+	if Dic.has(str(tile)):
+		set_cell(1, tile, 1, Vector2i(0,0),0)
+"
+
+[node name="Node2D" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_b2b3p")
+format = 2
+layer_1/tile_data = PackedInt32Array()
+script = SubResource("GDScript_l7sfk")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
